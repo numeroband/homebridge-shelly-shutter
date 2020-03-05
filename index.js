@@ -28,7 +28,7 @@ class ShellyShutterPlatform {
   async createAccessories() {
     const WindowCoverAccessory = (await import('./lib/WindowCoverAccessory.mjs')).default;
     const ShellyShutterManager = (await import('./lib/ShellyShutterManager.mjs')).default;
-    const manager = new ShellyShutterManager(this.log, this.config.devices);
+    const manager = new ShellyShutterManager(this.log);
     manager.on('discover', device => new WindowCoverAccessory(this.log, this.api, this.accessoryFromDevice(device), device));
     manager.start();
   }
