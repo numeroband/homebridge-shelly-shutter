@@ -16,6 +16,6 @@
     "homebridge-plugin"
   ],
   "dependencies": {
-    "shellies": "^0.16.0"
+    "shellies": "^1.0.2"
   }
 }
