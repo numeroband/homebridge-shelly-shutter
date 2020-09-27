@@ -2,12 +2,12 @@ const PLUGIN_NAME = "homebridge-shelly-shutter";
 const PLATFORM_NAME = "ShellyShutterPlatform";
 
 module.exports = homebridge => {
-  homebridge.registerPlatform(PLUGIN_NAME, PLATFORM_NAME, ShellyShutterPlatform, true);
+  homebridge.registerPlatform(PLUGIN_NAME, PLATFORM_NAME, ShellyPlatform, true);
 }
 
-class ShellyShutterPlatform {
+class ShellyPlatform {
   constructor(log, config, api) {
-    log("ShellyShutterPlatform Init");
+    log("ShellyPlatform Init");
     this.log = log;
     this.config = config;
     this.oldAccessories = new Map();
@@ -26,23 +26,22 @@ class ShellyShutterPlatform {
   }
 
   async createAccessories() {
-    const WindowCoverAccessory = (await import('./lib/WindowCoverAccessory.mjs')).default;
-    const ShellyShutterManager = (await import('./lib/ShellyShutterManager.mjs')).default;
-    const manager = new ShellyShutterManager(this.log);
-    manager.on('discover', device => new WindowCoverAccessory(this.log, this.api, this.accessoryFromDevice(device), device));
+    const ShellyManager = (await import('./lib/ShellyManager.mjs')).default;
+    const manager = new ShellyManager(this.log);
+    manager.on('discover', this.createAccessory.bind(this));
     manager.start();
   }
 
-  accessoryFromDevice(device) {
+  createAccessory(device, accessoryClass) {
     let accessory = this.oldAccessories.get(device.name);
     if (accessory) {
       this.log("Reusing accessory " + accessory.displayName);
     } else {
-      const Categories = this.api.hap.Accessory.Categories;
-      accessory = new this.api.platformAccessory(device.name, this.api.hap.uuid.generate(device.name), Categories.WINDOW_COVERING);
+      const category = accessoryClass.getCategory(this.api);
+      accessory = new this.api.platformAccessory(device.name, this.api.hap.uuid.generate(device.name), category);
       this.api.registerPlatformAccessories(PLUGIN_NAME, this.name, [accessory]);
       this.log("Created accessory " + accessory.displayName);
     }
-    return accessory;
+    new accessoryClass(this.log, this.api, accessory, device);
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "homebridge-shelly-shutter",
   "version": "0.0.3",
-  "description": "Shutter integration Shelly-Homebridge",
+  "description": "Shelly devices integration with Homebridge",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
