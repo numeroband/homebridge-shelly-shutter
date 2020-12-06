@@ -29,7 +29,7 @@ class ShellyPlatform {
     const ShellyManager = (await import('./lib/ShellyManager.mjs')).default;
     const manager = new ShellyManager(this.log);
     manager.on('discover', this.createAccessory.bind(this));
-    manager.start();
+    manager.start(config.iface);
   }
 
   createAccessory(device, accessoryClass) {
